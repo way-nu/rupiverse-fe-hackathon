@@ -1,0 +1,66 @@
+import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { AccountCard } from '@/modules/home/components/account-card';
+import { EmptyState } from '@/modules/home/components/empty-state';
+import { Button } from '@/components/button';
+import { Card } from '@/components/card';
+import { ScreenHeader } from '@/components/screen-header';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { useHome } from '@/modules/home/hooks';
+import { styles } from '@/modules/home/styles';
+import { formatRupees } from '@/utils/format';
+
+export default function Home() {
+    const { isLoading, isEmpty, banks, cards, inBanks, owedOnCards, addBank, addCard } = useHome();
+    return (
+        <ThemedView style={styles.fill}>
+            <SafeAreaView style={styles.fill} edges={['top']}>
+                <View style={styles.header}>
+                    <ScreenHeader title="Home" />
+                </View>
+                {isLoading ? (
+                    <ActivityIndicator style={styles.fill} />
+                ) : isEmpty ? (
+                    <EmptyState onAddBank={addBank} onAddCard={addCard} />
+                ) : (
+                    <ScrollView contentContainerStyle={styles.content}>
+                        <Card style={styles.totals}>
+                            <View style={styles.total}>
+                                <ThemedText type="caption" themeColor="textSecondary">
+                                    In bank accounts
+                                </ThemedText>
+                                <ThemedText type="amountLarge">{formatRupees(inBanks)}</ThemedText>
+                            </View>
+                            <View style={styles.total}>
+                                <ThemedText type="caption" themeColor="textSecondary">
+                                    Owed on cards
+                                </ThemedText>
+                                <ThemedText type="amountLarge" themeColor="danger">
+                                    {formatRupees(owedOnCards)}
+                                </ThemedText>
+                            </View>
+                        </Card>
+
+                        <ThemedText type="label" themeColor="textSecondary">
+                            BANK ACCOUNTS
+                        </ThemedText>
+                        {banks.map((a) => (
+                            <AccountCard key={a.id} account={a} />
+                        ))}
+                        <Button label="+ Add bank account" variant="dashed" compact onPress={addBank} />
+
+                        <ThemedText type="label" themeColor="textSecondary" style={styles.sectionGap}>
+                            CREDIT CARDS
+                        </ThemedText>
+                        {cards.map((a) => (
+                            <AccountCard key={a.id} account={a} />
+                        ))}
+                        <Button label="+ Add credit card" variant="dashed" compact onPress={addCard} />
+                    </ScrollView>
+                )}
+            </SafeAreaView>
+        </ThemedView>
+    );
+}
