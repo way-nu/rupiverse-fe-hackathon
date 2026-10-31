@@ -20,7 +20,11 @@ export async function handleMockRequest<T>(req: MockRequest): Promise<T> {
     await wait(MOCK_LATENCY_MS);
     for (const route of routes) {
         const params = match(route, req);
-        if (params) return (await route.handler({ ...req, params })) as T;
+        if (params) {
+            const result = await route.handler({ ...req, params });
+            // Return a fresh copy like a real network response, so cached data never shares objects with the mock db.
+            return (result === undefined ? result : JSON.parse(JSON.stringify(result))) as T;
+        }
     }
     throw new ApiError(404, `No mock for ${req.method} ${req.url}`);
 }
