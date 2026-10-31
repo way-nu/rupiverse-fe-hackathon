@@ -1,7 +1,8 @@
 import { Endpoints } from '@/constants/api';
 import { db } from '@/services/mock-server/db';
 import { ApiError, type MockRoute } from '@/services/mock-server/types';
-import type { LoginInput, NewAccountInput, Session } from '@/types';
+import { CATEGORY_COLORS } from '@/services/mock-server/constants';
+import type { Category, LoginInput, NewAccountInput, Session } from '@/types';
 
 export const routes: MockRoute[] = [
     {
@@ -35,6 +36,33 @@ export const routes: MockRoute[] = [
             };
             db.accounts.push(account);
             return account;
+        },
+    },
+    {
+        method: 'GET',
+        url: Endpoints.transactions,
+        // Until statements are uploaded (checkpoint 3) there is nothing to show without an account.
+        handler: () => (db.accounts.length ? [...db.transactions] : []),
+    },
+    {
+        method: 'GET',
+        url: Endpoints.categories,
+        handler: () => [...db.categories],
+    },
+    {
+        method: 'POST',
+        url: Endpoints.categories,
+        handler: ({ body }) => {
+            const name = ((body as { name?: string }).name ?? '').trim();
+            if (!name) throw new ApiError(400, 'Category name is required');
+            const category: Category = {
+                id: `c-user-${db.categories.length + 1}`,
+                name,
+                color: CATEGORY_COLORS[db.categories.length % CATEGORY_COLORS.length],
+                source: 'user',
+            };
+            db.categories.unshift(category);
+            return category;
         },
     },
 ];

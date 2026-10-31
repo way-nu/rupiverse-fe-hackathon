@@ -27,3 +27,23 @@ export type User = { id: string; email: string };
 export type Session = { token: string; user: User };
 
 export type LoginInput = { email: string; password: string };
+
+export type Category = {
+    id: string;
+    name: string;
+    color: string;
+    /** 'user' categories are created by the user; 'system' ones ship with RupiOS. */
+    source: 'user' | 'system';
+};
+
+export type Transaction = {
+    id: string;
+    /** ISO date (YYYY-MM-DD). */
+    date: string;
+    description: string;
+    /** Rupees, negative = money out. */
+    amount: number;
+    categoryId: string | null;
+    accountName: string;
+    accountLast4: string | null;
+};
