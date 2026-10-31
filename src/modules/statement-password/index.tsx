@@ -4,17 +4,19 @@ import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { Button } from '@/components/button';
 import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
+import { useModalPadding } from '@/hooks/use-modal-padding';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useStatementPassword } from '@/modules/statement-password/hooks';
 import { styles } from '@/modules/statement-password/styles';
 
 export default function StatementPassword() {
+    const padding = useModalPadding();
     const p = useStatementPassword();
     return (
         <ThemedView type="surface" style={styles.fill}>
             <KeyboardAvoidingView style={styles.fill} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-                <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+                <ScrollView contentContainerStyle={[styles.content, padding]} keyboardShouldPersistTaps="handled">
                     <View style={styles.file}>
                         <View style={styles.fileIcon}>
                             <Ionicons name="lock-closed-outline" size={18} color={Colors.primary} />

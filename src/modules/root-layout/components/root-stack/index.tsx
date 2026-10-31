@@ -1,7 +1,6 @@
 import { Stack } from 'expo-router';
 
 import { useSession } from '@/hooks/use-session';
-import { SHEET_DETENTS } from '@/modules/root-layout/constants';
 
 export function RootStack() {
     const { session } = useSession();
@@ -15,12 +14,16 @@ export function RootStack() {
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="import-results" />
                 <Stack.Screen
+                    name="categorise"
+                    options={{ presentation: 'modal' }}
+                />
+                <Stack.Screen
                     name="statement-password"
-                    options={{ presentation: 'formSheet', sheetAllowedDetents: SHEET_DETENTS, sheetGrabberVisible: true }}
+                    options={{ presentation: 'modal' }}
                 />
                 <Stack.Screen
                     name="add-account"
-                    options={{ presentation: 'formSheet', sheetAllowedDetents: SHEET_DETENTS, sheetGrabberVisible: true }}
+                    options={{ presentation: 'modal' }}
                 />
             </Stack.Protected>
         </Stack>

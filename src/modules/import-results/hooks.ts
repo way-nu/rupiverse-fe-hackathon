@@ -23,6 +23,6 @@ export function useImportResults() {
         },
         back: () => router.back(),
         viewTransactions: () => router.dismissTo('/transactions'),
-        uploadAnother: () => router.dismissTo('/statements'),
+        uploadAnother: () => router.dismissTo({ pathname: '/statements', params: accountId ? { accountId } : {} }),
     };
 }

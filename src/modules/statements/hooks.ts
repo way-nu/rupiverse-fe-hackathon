@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import * as DocumentPicker from 'expo-document-picker';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 
 import { ACCOUNTS_QUERY_KEY, statementsQueryKey } from '@/constants/query-keys';
 import { useStatementImport } from '@/hooks/use-statement-import';
@@ -11,10 +10,10 @@ import type { PickedFile } from '@/types';
 
 export function useStatements() {
     const { data: accounts = [], isLoading } = useQuery({ queryKey: ACCOUNTS_QUERY_KEY, queryFn: fetchAccounts });
-    const [selectedId, setSelectedId] = useState<string | null>(null);
     const { begin } = useStatementImport();
+    const { accountId } = useLocalSearchParams<{ accountId?: string }>();
 
-    const selected = accounts.find((a) => a.id === selectedId) ?? accounts[0];
+    const selected = accounts.find((a) => a.id === accountId) ?? accounts[0];
     const statements = useQuery({
         queryKey: statementsQueryKey(selected?.id ?? ''),
         queryFn: () => fetchStatements(selected.id),
@@ -34,7 +33,7 @@ export function useStatements() {
         isLoading,
         accounts,
         selected,
-        select: setSelectedId,
+        select: (id: string) => router.setParams({ accountId: id }),
         statements: statements.data ?? [],
         choosePdf,
         addAccount: () => router.navigate('/'),

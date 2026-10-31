@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppLogo } from '@/components/app-logo';
@@ -10,7 +10,7 @@ import { useLogin } from '@/modules/login/hooks';
 import { styles } from '@/modules/login/styles';
 
 export default function Login() {
-    const { email, setEmail, password, setPassword, submit, loading, error } = useLogin();
+    const { email, setEmail, password, setPassword, submit, loading, error, isSignup, toggleMode, forgotShown, showForgot } = useLogin();
     return (
         <ThemedView style={styles.fill}>
             <SafeAreaView style={styles.fill}>
@@ -25,8 +25,10 @@ export default function Login() {
                         </View>
 
                         <View style={styles.intro}>
-                            <ThemedText type="title">Welcome back</ThemedText>
-                            <ThemedText themeColor="textSecondary">Log in to see all your accounts in one place.</ThemedText>
+                            <ThemedText type="title">{isSignup ? 'Create your account' : 'Welcome back'}</ThemedText>
+                            <ThemedText themeColor="textSecondary">
+                                {isSignup ? 'Track all your accounts in one place.' : 'Log in to see all your accounts in one place.'}
+                            </ThemedText>
                         </View>
 
                         <View style={styles.form}>
@@ -39,6 +41,18 @@ export default function Login() {
                                 keyboardType="email-address"
                             />
                             <TextField label="Password" placeholder="Your password" value={password} onChangeText={setPassword} revealable />
+                            {isSignup ? null : (
+                                <Pressable accessibilityRole="link" onPress={showForgot} style={styles.forgot}>
+                                    <ThemedText type="small" themeColor="primary" style={{ fontWeight: '600' }}>
+                                        Forgot password?
+                                    </ThemedText>
+                                </Pressable>
+                            )}
+                            {forgotShown && !isSignup ? (
+                                <ThemedText type="small" themeColor="textSecondary">
+                                    Password reset will be available once the backend is connected.
+                                </ThemedText>
+                            ) : null}
                             {error ? (
                                 <ThemedText type="small" themeColor="danger">
                                     {error}
@@ -46,7 +60,14 @@ export default function Login() {
                             ) : null}
                         </View>
 
-                        <Button label="Log in" onPress={submit} loading={loading} />
+                        <Button label={isSignup ? 'Create account' : 'Log in'} onPress={submit} loading={loading} />
+
+                        <ThemedText themeColor="textSecondary" style={styles.switch}>
+                            {isSignup ? 'Already have an account? ' : 'New to RupiOS? '}
+                            <ThemedText accessibilityRole="link" themeColor="primary" onPress={toggleMode} style={{ fontWeight: '600' }}>
+                                {isSignup ? 'Log in' : 'Create an account'}
+                            </ThemedText>
+                        </ThemedText>
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>

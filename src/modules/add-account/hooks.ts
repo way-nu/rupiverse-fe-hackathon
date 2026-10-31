@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 
+import { useSingleFlight } from '@/hooks/use-single-flight';
 import { ACCOUNTS_QUERY_KEY } from '@/constants/query-keys';
 import { createAccount } from '@/services/accounts';
 import { COPY, DEFAULT_OPENING_DATE } from '@/modules/add-account/constants';
@@ -21,6 +22,7 @@ export function useAddAccount() {
     const [date, setDate] = useState(DEFAULT_OPENING_DATE);
 
     const queryClient = useQueryClient();
+    const singleFlight = useSingleFlight();
     const save = useMutation({
         mutationFn: createAccount,
         onSuccess: async () => {
@@ -29,6 +31,7 @@ export function useAddAccount() {
         },
     });
 
+    const dateValid = /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(new Date(date).getTime());
     const finalTag = customTag !== null ? customTag.trim() || 'Custom' : tag;
 
     return {
@@ -50,6 +53,7 @@ export function useAddAccount() {
         setBalance: (v: string) => setBalance(v.replace(/[^\d]/g, '')),
         date,
         setDate,
+        dateValid,
         finalTag,
         canContinue: name.trim().length > 0,
         next: () => setStep(2),
@@ -57,13 +61,17 @@ export function useAddAccount() {
         close: () => router.dismiss(),
         saving: save.isPending,
         submit: () =>
-            save.mutate({
-                kind,
-                name: name.trim(),
-                tag: finalTag,
-                last4: last4 || null,
-                openingBalance: Number(balance || 0),
-                openingDate: date,
-            }),
+            singleFlight(() =>
+                save
+                    .mutateAsync({
+                        kind,
+                        name: name.trim(),
+                        tag: finalTag,
+                        last4: last4 || null,
+                        openingBalance: Number(balance || 0),
+                        openingDate: date,
+                    })
+                    .catch(() => undefined),
+            ),
     };
 }

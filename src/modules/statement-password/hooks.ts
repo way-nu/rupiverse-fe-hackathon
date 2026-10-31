@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 
+import { useSingleFlight } from '@/hooks/use-single-flight';
 import { useStatementImport } from '@/hooks/use-statement-import';
 import { formatFileSize } from '@/utils/format';
 
@@ -8,17 +9,19 @@ export function useStatementPassword() {
     const { pending, run } = useStatementImport();
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const singleFlight = useSingleFlight();
 
     const first = pending[0];
     const extra = pending.length - 1;
 
-    const submit = async () => {
-        setLoading(true);
-        await run(password);
-        setLoading(false);
-        router.dismiss();
-        router.navigate('/import-results');
-    };
+    const submit = () =>
+        singleFlight(async () => {
+            setLoading(true);
+            await run(password);
+            setLoading(false);
+            router.dismiss();
+            router.navigate('/import-results');
+        });
 
     return {
         title: first ? (extra > 0 ? `${first.name} + ${extra} more` : first.name) : 'No file selected',

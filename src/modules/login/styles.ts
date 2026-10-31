@@ -9,4 +9,6 @@ export const styles = StyleSheet.create({
     name: { fontFamily: Fonts.semibold, fontSize: 36, lineHeight: 40, letterSpacing: -0.7 },
     intro: { alignItems: 'center', gap: 6 },
     form: { gap: Spacing.three },
+    forgot: { alignSelf: 'flex-end' },
+    switch: { textAlign: 'center' },
 });

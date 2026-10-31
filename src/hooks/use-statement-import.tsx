@@ -63,7 +63,9 @@ export function StatementImportProvider({ children }: { children: ReactNode }) {
                         file,
                         status: skipped ? 'skipped' : 'imported',
                         transactionsAdded: res.summary.transactionsAdded,
-                        message: skipped
+                        message: res.summary.skipReason === 'DUPLICATE'
+                            ? 'Skipped. This statement was already imported.'
+                            : skipped
                             ? `Skipped. All ${res.summary.skippedBeforeOpeningDate} transactions are before your start date, ${formatDate(account?.openingDate ?? res.statement.periodStart)}.`
                             : `Imported · ${res.summary.transactionsAdded} transactions`,
                     });

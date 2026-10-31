@@ -3,6 +3,7 @@ import { describe, expect, test } from '@jest/globals';
 import { fetchAccounts, createAccount } from '@/services/accounts';
 import { login } from '@/services/auth';
 import { createCategory, fetchCategories } from '@/services/categories';
+import { formatRupees } from '@/utils/format';
 import { importStatement, fetchStatements } from '@/services/statements';
 import { fetchTransactions } from '@/services/transactions';
 
@@ -55,5 +56,23 @@ describe('statement import', () => {
         await expect(importStatement(bank.id, pdf('a.pdf'), 'wrong')).rejects.toMatchObject({ code: 'WRONG_PASSWORD' });
         await expect(importStatement(bank.id, pdf('scan_1.pdf'), 'secret')).rejects.toMatchObject({ code: 'UNREADABLE_PDF' });
         expect((await importStatement(bank.id, pdf('HDFC_Mar_2026.pdf'), 'secret')).statement.status).toBe('skipped');
+    });
+});
+
+describe('demo safety', () => {
+    test('formats rupees with Indian grouping', () => {
+        expect(formatRupees(212340)).toBe('₹2,12,340');
+        expect(formatRupees(5968400)).toBe('₹59,68,400');
+        expect(formatRupees(999)).toBe('₹999');
+        expect(formatRupees(1234.5)).toBe('₹1,234.50');
+    });
+
+    test('uploading the same statement twice does not double count', async () => {
+        const [, card] = await fetchAccounts();
+        const file = { name: 'DUP_Oct_2026.pdf', size: 1000, uri: 'file:///x.pdf', mimeType: 'application/pdf' };
+        const first = await importStatement(card.id, file, 'secret');
+        const second = await importStatement(card.id, file, 'secret');
+        expect(second.statement.status).toBe('skipped');
+        expect(second.balance.amount).toBe(first.balance.amount);
     });
 });

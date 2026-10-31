@@ -5,6 +5,7 @@ import { Colors, Radius, Spacing } from '@/constants/theme';
 export const styles = StyleSheet.create({
     fill: { flex: 1 },
     content: { padding: Spacing.four, gap: 18 },
+    titleRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     headerText: { flex: 1 },
     tags: { gap: Spacing.two },

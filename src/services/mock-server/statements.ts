@@ -3,7 +3,7 @@ import { ApiError, type MockRequest } from '@/services/mock-server/types';
 import type { PickedFile, Transaction } from '@/types';
 
 /**
- * Mock behaviour, keyed on the upload so every outcome can be demoed:
+ * Mock behaviour, keyed on the upload so every outcome can be demoed (same file twice -> skipped as DUPLICATE):
  *   password "wrong"        -> 422 WRONG_PASSWORD
  *   file name has "scan"    -> 422 UNREADABLE_PDF
  *   file name has "old"/"_mar_" -> 200 skipped (all before the opening date)
@@ -45,6 +45,14 @@ export function importStatement({ params, body }: MockRequest) {
     if (/scan/i.test(file.name)) throw new ApiError(422, 'Could not read this PDF', 'UNREADABLE_PDF');
 
     const { month, start, end } = period(file.name);
+    if (db.statements.some((s) => s.accountId === account.id && s.fileName === file.name && s.status === 'imported')) {
+        return {
+            statement: { id: 'dup', fileName: file.name, sizeBytes: file.size, periodStart: start, periodEnd: end, status: 'skipped' },
+            summary: { transactionsAdded: 0, duplicatesIgnored: 8, skippedBeforeOpeningDate: 0, skipReason: 'DUPLICATE' },
+            balance: { previousPaise: account.balance * 100, amountPaise: account.balance * 100, asOf: account.balanceAsOf },
+            transactions: [],
+        };
+    }
     const id = `st_${db.statements.length + 1}`;
     const base = { id, fileName: file.name, sizeBytes: file.size, periodStart: start, periodEnd: end };
 

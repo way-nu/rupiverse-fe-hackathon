@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { useSingleFlight } from '@/hooks/use-single-flight';
 import { useSession } from '@/hooks/use-session';
 
 export function useLogin() {
@@ -7,9 +8,12 @@ export function useLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const singleFlight = useSingleFlight();
     const [error, setError] = useState<string | null>(null);
+    const [mode, setMode] = useState<'login' | 'signup'>('login');
+    const [forgotShown, setForgotShown] = useState(false);
 
-    const submit = async () => {
+    const submit = () => singleFlight(async () => {
         setLoading(true);
         setError(null);
         try {
@@ -19,7 +23,22 @@ export function useLogin() {
         } finally {
             setLoading(false);
         }
-    };
+    });
 
-    return { email, setEmail, password, setPassword, submit, loading, error };
+    return {
+        email,
+        setEmail,
+        password,
+        setPassword,
+        submit,
+        loading,
+        error,
+        isSignup: mode === 'signup',
+        toggleMode: () => {
+            setMode((m) => (m === 'login' ? 'signup' : 'login'));
+            setError(null);
+        },
+        forgotShown,
+        showForgot: () => setForgotShown(true),
+    };
 }

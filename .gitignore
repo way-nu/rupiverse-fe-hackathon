@@ -43,3 +43,6 @@ example
 /android
 
 .playwright-mcp/
+
+# separate backend repository (cloned here for local development)
+/rupiverse-backend-hackathon/

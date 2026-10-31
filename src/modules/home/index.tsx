@@ -1,4 +1,5 @@
-import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AccountCard } from '@/modules/home/components/account-card';
@@ -8,17 +9,21 @@ import { Card } from '@/components/card';
 import { ScreenHeader } from '@/components/screen-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Colors } from '@/constants/theme';
 import { useHome } from '@/modules/home/hooks';
 import { styles } from '@/modules/home/styles';
 import { formatRupees } from '@/utils/format';
 
 export default function Home() {
-    const { isLoading, isEmpty, banks, cards, inBanks, owedOnCards, addBank, addCard } = useHome();
+    const { isLoading, isEmpty, banks, cards, inBanks, owedOnCards, addBank, addCard, logout, uploadStatement } = useHome();
     return (
         <ThemedView style={styles.fill}>
             <SafeAreaView style={styles.fill} edges={['top']}>
                 <View style={styles.header}>
                     <ScreenHeader title="Home" />
+                    <Pressable accessibilityRole="button" accessibilityLabel="Log out" onPress={logout} hitSlop={12}>
+                        <Ionicons name="log-out-outline" size={22} color={Colors.textSecondary} />
+                    </Pressable>
                 </View>
                 {isLoading ? (
                     <ActivityIndicator style={styles.fill} />
@@ -47,7 +52,7 @@ export default function Home() {
                             BANK ACCOUNTS
                         </ThemedText>
                         {banks.map((a) => (
-                            <AccountCard key={a.id} account={a} />
+                            <AccountCard key={a.id} account={a} onUploadStatement={() => uploadStatement(a.id)} />
                         ))}
                         <Button label="+ Add bank account" variant="dashed" compact onPress={addBank} />
 
@@ -55,7 +60,7 @@ export default function Home() {
                             CREDIT CARDS
                         </ThemedText>
                         {cards.map((a) => (
-                            <AccountCard key={a.id} account={a} />
+                            <AccountCard key={a.id} account={a} onUploadStatement={() => uploadStatement(a.id)} />
                         ))}
                         <Button label="+ Add credit card" variant="dashed" compact onPress={addCard} />
                     </ScrollView>

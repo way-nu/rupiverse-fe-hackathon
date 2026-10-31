@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 
 import { CATEGORIES_QUERY_KEY, TRANSACTIONS_QUERY_KEY } from '@/constants/query-keys';
@@ -65,5 +66,6 @@ export function useTransactions() {
         },
         query,
         setQuery,
+        categorise: (id: string) => router.push({ pathname: '/categorise', params: { id } }),
     };
 }

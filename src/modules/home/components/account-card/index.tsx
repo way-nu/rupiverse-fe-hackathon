@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { Badge } from '@/components/badge';
 import { BankBadge } from '@/components/bank-badge';
@@ -8,7 +8,7 @@ import { styles } from '@/modules/home/components/account-card/styles';
 import { formatDate, formatRupees } from '@/utils/format';
 import type { Account } from '@/types';
 
-export function AccountCard({ account }: { account: Account }) {
+export function AccountCard({ account, onUploadStatement }: { account: Account; onUploadStatement: () => void }) {
     const isCard = account.kind === 'card';
     return (
         <Card style={styles.card}>
@@ -42,9 +42,11 @@ export function AccountCard({ account }: { account: Account }) {
                 <ThemedText type="caption" themeColor="textSecondary">
                     Balance as of {formatDate(account.balanceAsOf)}
                 </ThemedText>
-                <ThemedText type="small" themeColor="primary" style={styles.upload}>
-                    Upload statement
-                </ThemedText>
+                <Pressable accessibilityRole="link" accessibilityLabel={`Upload statement for ${account.name}`} onPress={onUploadStatement} hitSlop={8}>
+                    <ThemedText type="small" themeColor="primary" style={styles.upload}>
+                        Upload statement
+                    </ThemedText>
+                </Pressable>
             </View>
         </Card>
     );

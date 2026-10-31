@@ -1,4 +1,4 @@
-import { Endpoints, STATEMENTS_PATTERN } from '@/constants/api';
+import { Endpoints, STATEMENTS_PATTERN, TRANSACTION_PATTERN } from '@/constants/api';
 import { db } from '@/services/mock-server/db';
 import { ApiError, type MockRoute } from '@/services/mock-server/types';
 import { CATEGORY_COLORS } from '@/services/mock-server/constants';
@@ -69,4 +69,14 @@ export const routes: MockRoute[] = [
     },
     { method: 'GET', url: STATEMENTS_PATTERN, handler: listStatements },
     { method: 'POST', url: STATEMENTS_PATTERN, handler: importStatement },
+    {
+        method: 'PATCH',
+        url: TRANSACTION_PATTERN,
+        handler: ({ params, body }) => {
+            const tx = db.transactions.find((t) => t.id === params?.id);
+            if (!tx) throw new ApiError(404, 'Transaction not found', 'TRANSACTION_NOT_FOUND');
+            tx.categoryId = (body as { categoryId: string | null }).categoryId;
+            return { ...tx };
+        },
+    },
 ];

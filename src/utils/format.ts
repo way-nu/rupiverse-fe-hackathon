@@ -1,5 +1,10 @@
+/** Indian digit grouping (12,34,567) without relying on Intl support on the device. */
 export function formatRupees(amount: number): string {
-    return `₹${amount.toLocaleString('en-IN')}`;
+    const [whole, fraction] = Math.abs(amount).toFixed(2).split('.');
+    const last3 = whole.slice(-3);
+    const rest = whole.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+    const grouped = rest ? `${rest},${last3}` : last3;
+    return `${amount < 0 ? '-' : ''}₹${grouped}${fraction === '00' ? '' : `.${fraction}`}`;
 }
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

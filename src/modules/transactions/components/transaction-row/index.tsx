@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 import { Badge } from '@/components/badge';
@@ -7,9 +6,9 @@ import { styles } from '@/modules/transactions/components/transaction-row/styles
 import { formatSignedRupees } from '@/utils/format';
 import type { Category, Transaction } from '@/types';
 
-type TransactionRowProps = { transaction: Transaction; category?: Category };
+type TransactionRowProps = { transaction: Transaction; category?: Category; onCategorise: () => void };
 
-export function TransactionRow({ transaction, category }: TransactionRowProps) {
+export function TransactionRow({ transaction, category, onCategorise }: TransactionRowProps) {
     const isIn = transaction.amount > 0;
     return (
         <View style={styles.row}>
@@ -28,9 +27,11 @@ export function TransactionRow({ transaction, category }: TransactionRowProps) {
                 </ThemedText>
                 <View style={styles.tags}>
                     {category ? (
-                        <Badge label={category.name} />
+                        <Pressable accessibilityRole="button" accessibilityLabel={`Change category, ${category.name}`} onPress={onCategorise} hitSlop={6}>
+                            <Badge label={category.name} />
+                        </Pressable>
                     ) : (
-                        <Pressable accessibilityRole="link" onPress={() => router.navigate('/categories')} style={styles.categorise}>
+                        <Pressable accessibilityRole="button" accessibilityLabel="Categorise" onPress={onCategorise} style={styles.categorise}>
                             <ThemedText type="caption" themeColor="primary" style={styles.categoriseText}>
                                 + Categorise
                             </ThemedText>

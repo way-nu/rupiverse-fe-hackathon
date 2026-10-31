@@ -21,7 +21,7 @@ export default function Transactions() {
                 <View style={styles.wide}>
                     <View style={styles.header}>
                         <ScreenHeader title="Transactions" />
-                        <Pressable accessibilityLabel="Search transactions" onPress={t.toggleSearch} hitSlop={12}>
+                        <Pressable accessibilityRole="button" accessibilityLabel="Search transactions" onPress={t.toggleSearch} hitSlop={12}>
                             <Ionicons name={t.searching ? 'close' : 'search'} size={20} color={Colors.text} />
                         </Pressable>
                     </View>
@@ -61,7 +61,7 @@ export default function Transactions() {
                                     </ThemedText>
                                 </View>
                             )}
-                            renderItem={({ item }) => <TransactionRow transaction={item} category={item.categoryId ? t.categoryById.get(item.categoryId) : undefined} />}
+                            renderItem={({ item }) => <TransactionRow transaction={item} category={item.categoryId ? t.categoryById.get(item.categoryId) : undefined} onCategorise={() => t.categorise(item.id)} />}
                         />
                     )}
                 </View>

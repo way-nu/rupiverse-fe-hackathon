@@ -18,7 +18,7 @@ export default function ImportResults() {
             <SafeAreaView style={styles.fill}>
                 <ScrollView contentContainerStyle={styles.content}>
                     <View style={styles.header}>
-                        <Pressable accessibilityLabel="Back to statements" onPress={r.back} style={styles.back}>
+                        <Pressable accessibilityRole="button" accessibilityLabel="Back to statements" onPress={r.back} style={styles.back}>
                             <Ionicons name="chevron-back" size={22} color={Colors.text} />
                         </Pressable>
                         <ThemedText type="heading" accessibilityRole="header">
