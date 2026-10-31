@@ -14,5 +14,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     selected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+    selectedDark: { backgroundColor: Colors.text, borderColor: Colors.text },
     dashed: { borderStyle: 'dashed', borderColor: Colors.primary, backgroundColor: 'transparent' },
 });
