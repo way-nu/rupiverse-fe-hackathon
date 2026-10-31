@@ -13,6 +13,7 @@ export function RootStack() {
             <Stack.Protected guard={signedIn}>
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="import-results" />
+                <Stack.Screen name="trips" />
                 <Stack.Screen
                     name="categorise"
                     options={{ presentation: 'modal' }}

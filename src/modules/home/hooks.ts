@@ -27,6 +27,7 @@ export function useHome() {
             signOut();
         },
         uploadStatement: (accountId: string) => router.navigate({ pathname: '/statements', params: { accountId } }),
+        openTrips: () => router.push('/trips'),
         addBank: () => router.push({ pathname: '/add-account', params: { kind: 'bank' } }),
         addCard: () => router.push({ pathname: '/add-account', params: { kind: 'card' } }),
     };

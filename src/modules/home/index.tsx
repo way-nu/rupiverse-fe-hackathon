@@ -17,7 +17,7 @@ import { formatRupees } from '@/utils/format';
 
 export default function Home() {
     const bottomPadding = useTabBarPadding();
-    const { isLoading, isEmpty, banks, cards, inBanks, owedOnCards, addBank, addCard, logout, uploadStatement } = useHome();
+    const { isLoading, isEmpty, banks, cards, inBanks, owedOnCards, addBank, addCard, logout, uploadStatement, openTrips } = useHome();
     return (
         <ThemedView style={styles.fill}>
             <SafeAreaView style={styles.fill} edges={['top']}>
@@ -49,6 +49,18 @@ export default function Home() {
                                 </ThemedText>
                             </View>
                         </Card>
+
+                        <Pressable accessibilityRole="button" accessibilityLabel="Trips within reach" onPress={openTrips}>
+                            <Card style={styles.trips}>
+                                <View style={styles.tripsText}>
+                                    <ThemedText style={{ fontWeight: '600' }}>Trips within reach</ThemedText>
+                                    <ThemedText type="caption" themeColor="textSecondary">
+                                        Find trip ideas that fit your budget
+                                    </ThemedText>
+                                </View>
+                                <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
+                            </Card>
+                        </Pressable>
 
                         <ThemedText type="label" themeColor="textSecondary">
                             BANK ACCOUNTS

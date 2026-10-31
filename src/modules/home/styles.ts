@@ -8,5 +8,7 @@ export const styles = StyleSheet.create({
     content: { paddingHorizontal: Spacing.four, paddingBottom: Spacing.four, gap: Spacing.two, width: '100%', maxWidth: 560, alignSelf: 'center' },
     totals: { flexDirection: 'row', marginBottom: Spacing.two },
     total: { flex: 1, gap: 2 },
+    trips: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
+    tripsText: { flex: 1, gap: 2 },
     sectionGap: { marginTop: Spacing.three },
 });

@@ -2,8 +2,9 @@ import { Endpoints, STATEMENTS_PATTERN, TRANSACTION_PATTERN } from '@/constants/
 import { db } from '@/services/mock-server/db';
 import { ApiError, type MockRoute } from '@/services/mock-server/types';
 import { CATEGORY_COLORS } from '@/services/mock-server/constants';
+import fixture from '@/services/mock-server/fixtures/trip-recommendations.json';
 import { importStatement, listStatements } from '@/services/mock-server/statements';
-import type { Category, LoginInput, NewAccountInput, Session } from '@/types';
+import type { Category, LoginInput, NewAccountInput, Session, TripRecommendationInput, TripRecommendations } from '@/types';
 
 export const routes: MockRoute[] = [
     {
@@ -77,6 +78,24 @@ export const routes: MockRoute[] = [
             if (!tx) throw new ApiError(404, 'Transaction not found', 'TRANSACTION_NOT_FOUND');
             tx.categoryId = (body as { categoryId: string | null }).categoryId;
             return { ...tx };
+        },
+    },
+    {
+        method: 'POST',
+        url: Endpoints.tripRecommendations,
+        // Replays a real Anakin search captured on 2026-10-31 (origin Bengaluru, budget 10,000). The search itself is not re-run.
+        handler: ({ body }): TripRecommendations => {
+            const input = body as TripRecommendationInput;
+            if (!input?.origin?.trim() || !(input.tripBudgetINR > 0)) throw new ApiError(400, 'origin and tripBudgetINR are required', 'INVALID_REQUEST');
+            return {
+                ...(fixture as Pick<TripRecommendations, 'searchId' | 'checkedAt' | 'results'>),
+                origin: input.origin.trim(),
+                travelMonth: input.travelMonth ?? null,
+                travelers: input.travelers ?? 1,
+                tripBudgetINR: input.tripBudgetINR,
+                currency: 'INR',
+                budgetNotice: 'Trip ideas are source-backed, but prices and availability have not been verified.',
+            };
         },
     },
 ];

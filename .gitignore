@@ -46,3 +46,6 @@ example
 
 # separate backend repository (cloned here for local development)
 /rupiverse-backend-hackathon/
+
+# secrets for the Anakin trip service
+/anakin/.env

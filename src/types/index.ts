@@ -69,3 +69,35 @@ export type StatementImport = {
     balance: { previous: number; amount: number; asOf: string };
     transactions: Transaction[];
 };
+
+/** Contract of the Anakin trip service (anakin/README.md), reached through the app backend. */
+export type TripRecommendationInput = {
+    origin: string;
+    tripBudgetINR: number;
+    travelMonth?: string;
+    travelers?: number;
+    interests?: string[];
+};
+
+export type TripResult = {
+    title: string;
+    snippet: string;
+    sourceUrl: string;
+    publishedDate: string | null;
+    sourceUpdatedAt: string | null;
+    /** Always null today: the service never invents prices. */
+    estimatedCostINR: number | null;
+    budgetFit: 'unverified';
+};
+
+export type TripRecommendations = {
+    searchId: string | null;
+    checkedAt: string;
+    origin: string;
+    travelMonth: string | null;
+    travelers: number;
+    tripBudgetINR: number;
+    currency: 'INR';
+    budgetNotice: string;
+    results: TripResult[];
+};

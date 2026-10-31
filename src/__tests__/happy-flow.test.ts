@@ -6,6 +6,7 @@ import { createCategory, fetchCategories } from '@/services/categories';
 import { formatRupees } from '@/utils/format';
 import { importStatement, fetchStatements } from '@/services/statements';
 import { fetchTransactions } from '@/services/transactions';
+import { fetchTripRecommendations } from '@/services/trips';
 
 const input = { openingDate: '2026-04-01', last4: '1234' };
 
@@ -74,5 +75,15 @@ describe('demo safety', () => {
         const second = await importStatement(card.id, file, 'secret');
         expect(second.statement.status).toBe('skipped');
         expect(second.balance.amount).toBe(first.balance.amount);
+    });
+});
+
+describe('trip recommendations', () => {
+    test('returns source-backed ideas for the requested budget', async () => {
+        const res = await fetchTripRecommendations({ origin: 'Bengaluru', tripBudgetINR: 10000, travelers: 2 });
+        expect(res.tripBudgetINR).toBe(10000);
+        expect(res.results.length).toBeGreaterThan(0);
+        expect(res.results.every((r) => r.sourceUrl.startsWith('https://') && r.estimatedCostINR === null)).toBe(true);
+        await expect(fetchTripRecommendations({ origin: '', tripBudgetINR: 0 })).rejects.toMatchObject({ code: 'INVALID_REQUEST' });
     });
 });

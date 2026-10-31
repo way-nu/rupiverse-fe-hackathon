@@ -10,5 +10,6 @@ export const Endpoints = {
     transactions: `${API_BASE_URL}/transactions`,
     transaction: (id: string) => TRANSACTION_PATTERN.replace(':id', id),
     categories: `${API_BASE_URL}/categories`,
+    tripRecommendations: `${API_BASE_URL}/trips/recommendations`,
     statements: (accountId: string) => STATEMENTS_PATTERN.replace(':accountId', accountId),
 } as const;
