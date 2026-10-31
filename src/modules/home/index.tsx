@@ -10,11 +10,13 @@ import { ScreenHeader } from '@/components/screen-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 import { useHome } from '@/modules/home/hooks';
 import { styles } from '@/modules/home/styles';
 import { formatRupees } from '@/utils/format';
 
 export default function Home() {
+    const bottomPadding = useTabBarPadding();
     const { isLoading, isEmpty, banks, cards, inBanks, owedOnCards, addBank, addCard, logout, uploadStatement } = useHome();
     return (
         <ThemedView style={styles.fill}>
@@ -28,9 +30,9 @@ export default function Home() {
                 {isLoading ? (
                     <ActivityIndicator style={styles.fill} />
                 ) : isEmpty ? (
-                    <EmptyState onAddBank={addBank} onAddCard={addCard} />
+                    <EmptyState onAddBank={addBank} onAddCard={addCard} bottomPadding={bottomPadding} />
                 ) : (
-                    <ScrollView contentContainerStyle={styles.content}>
+                    <ScrollView contentContainerStyle={[styles.content, { paddingBottom: bottomPadding }]}>
                         <Card style={styles.totals}>
                             <View style={styles.total}>
                                 <ThemedText type="caption" themeColor="textSecondary">

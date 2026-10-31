@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 export const Colors = {
     text: '#0E0E0C',
     textSecondary: '#5A5A55',
@@ -49,3 +51,6 @@ export const Radius = {
 } as const;
 
 export const MaxContentWidth = 800;
+
+/** Height of the native tab bar that content must clear (iOS 50pt, Android 80dp Material 3 bar; web uses in-flow tabs). */
+export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;

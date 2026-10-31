@@ -6,10 +6,12 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { AddCategoryCard } from '@/modules/categories/components/add-category-card';
 import { CategoryRow } from '@/modules/categories/components/category-row';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 import { useCategories } from '@/modules/categories/hooks';
 import { styles } from '@/modules/categories/styles';
 
 export default function Categories() {
+    const bottomPadding = useTabBarPadding();
     const c = useCategories();
     return (
         <ThemedView style={styles.fill}>
@@ -18,7 +20,7 @@ export default function Categories() {
                     <View style={styles.header}>
                         <ScreenHeader title="Categories" />
                     </View>
-                    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+                    <ScrollView contentContainerStyle={[styles.content, { paddingBottom: bottomPadding }]} keyboardShouldPersistTaps="handled">
                         <AddCategoryCard name={c.name} onChangeName={c.setName} onAdd={c.add} disabled={!c.canAdd} loading={c.adding} />
                         {c.isLoading ? (
                             <ActivityIndicator />

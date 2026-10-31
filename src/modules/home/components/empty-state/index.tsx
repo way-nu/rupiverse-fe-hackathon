@@ -5,11 +5,11 @@ import { Button } from '@/components/button';
 import { ThemedText } from '@/components/themed-text';
 import { styles } from '@/modules/home/components/empty-state/styles';
 
-type EmptyStateProps = { onAddBank: () => void; onAddCard: () => void };
+type EmptyStateProps = { onAddBank: () => void; onAddCard: () => void; bottomPadding: number };
 
-export function EmptyState({ onAddBank, onAddCard }: EmptyStateProps) {
+export function EmptyState({ onAddBank, onAddCard, bottomPadding }: EmptyStateProps) {
     return (
-        <View style={styles.wrap}>
+        <View style={[styles.wrap, { paddingBottom: bottomPadding }]}>
             <AppLogo size={72} inverted />
             <ThemedText type="heading" style={styles.title}>
                 Add your first account

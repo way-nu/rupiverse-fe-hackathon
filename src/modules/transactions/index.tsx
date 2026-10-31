@@ -10,10 +10,12 @@ import { Colors } from '@/constants/theme';
 import { FilterBar } from '@/modules/transactions/components/filter-bar';
 import { MonthSummary } from '@/modules/transactions/components/month-summary';
 import { TransactionRow } from '@/modules/transactions/components/transaction-row';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 import { useTransactions } from '@/modules/transactions/hooks';
 import { styles } from '@/modules/transactions/styles';
 
 export default function Transactions() {
+    const bottomPadding = useTabBarPadding();
     const t = useTransactions();
     return (
         <ThemedView style={styles.fill}>
@@ -42,7 +44,7 @@ export default function Transactions() {
                             sections={t.sections}
                             keyExtractor={(item) => item.id}
                             stickySectionHeadersEnabled
-                            contentContainerStyle={styles.list}
+                            contentContainerStyle={[styles.list, { paddingBottom: bottomPadding }]}
                             ListHeaderComponent={
                                 <>
                                     {t.month ? <MonthSummary {...t.month} /> : null}
