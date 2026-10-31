@@ -1,7 +1,8 @@
-import { Endpoints } from '@/constants/api';
+import { Endpoints, STATEMENTS_PATTERN } from '@/constants/api';
 import { db } from '@/services/mock-server/db';
 import { ApiError, type MockRoute } from '@/services/mock-server/types';
 import { CATEGORY_COLORS } from '@/services/mock-server/constants';
+import { importStatement, listStatements } from '@/services/mock-server/statements';
 import type { Category, LoginInput, NewAccountInput, Session } from '@/types';
 
 export const routes: MockRoute[] = [
@@ -33,6 +34,7 @@ export const routes: MockRoute[] = [
                 balance: input.openingBalance,
                 balanceAsOf: input.openingDate,
                 openingDate: input.openingDate,
+                statementCount: 0,
             };
             db.accounts.push(account);
             return account;
@@ -42,7 +44,7 @@ export const routes: MockRoute[] = [
         method: 'GET',
         url: Endpoints.transactions,
         // Until statements are uploaded (checkpoint 3) there is nothing to show without an account.
-        handler: () => (db.accounts.length ? [...db.transactions] : []),
+        handler: () => (db.accounts.length ? [...db.transactions].sort((a, b) => b.date.localeCompare(a.date)) : []),
     },
     {
         method: 'GET',
@@ -65,4 +67,6 @@ export const routes: MockRoute[] = [
             return category;
         },
     },
+    { method: 'GET', url: STATEMENTS_PATTERN, handler: listStatements },
+    { method: 'POST', url: STATEMENTS_PATTERN, handler: importStatement },
 ];

@@ -1,8 +1,9 @@
-import { expect, test } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
 import { fetchAccounts, createAccount } from '@/services/accounts';
 import { login } from '@/services/auth';
 import { createCategory, fetchCategories } from '@/services/categories';
+import { importStatement, fetchStatements } from '@/services/statements';
 import { fetchTransactions } from '@/services/transactions';
 
 const input = { openingDate: '2026-04-01', last4: '1234' };
@@ -30,4 +31,29 @@ test('transactions are listed and a new category shows up', async () => {
     await createCategory('Pets');
     const cats = await fetchCategories();
     expect(cats[0]).toMatchObject({ name: 'Pets', source: 'user' });
+});
+
+describe('statement import', () => {
+    const pdf = (name: string) => ({ name, size: 200000, uri: 'file:///x.pdf', mimeType: 'application/pdf' });
+
+    test('imports into a bank account and a card, updating balances', async () => {
+        const [bank, card] = await fetchAccounts();
+        const bankRes = await importStatement(bank.id, pdf('HDFC_Sep_2026.pdf'), 'secret');
+        expect(bankRes.statement.status).toBe('imported');
+        expect(bankRes.transactions.length).toBeGreaterThan(0);
+        expect(bankRes.balance.amount).not.toBe(bankRes.balance.previous);
+
+        const cardRes = await importStatement(card.id, pdf('HDFC_Sep_2026.pdf'), 'secret');
+        expect(cardRes.balance.amount).toBeGreaterThan(cardRes.balance.previous); // spend raises what is owed
+
+        expect((await fetchStatements(bank.id)).map((s) => s.fileName)).toContain('HDFC_Sep_2026.pdf');
+        expect((await fetchAccounts())[0].statementCount).toBe(1);
+    });
+
+    test('reports wrong password, unreadable and skipped files', async () => {
+        const [bank] = await fetchAccounts();
+        await expect(importStatement(bank.id, pdf('a.pdf'), 'wrong')).rejects.toMatchObject({ code: 'WRONG_PASSWORD' });
+        await expect(importStatement(bank.id, pdf('scan_1.pdf'), 'secret')).rejects.toMatchObject({ code: 'UNREADABLE_PDF' });
+        expect((await importStatement(bank.id, pdf('HDFC_Mar_2026.pdf'), 'secret')).statement.status).toBe('skipped');
+    });
 });

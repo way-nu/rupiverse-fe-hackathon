@@ -2,15 +2,14 @@ export function formatRupees(amount: number): string {
     return `₹${amount.toLocaleString('en-IN')}`;
 }
 
-export function formatDate(iso: string): string {
-    const d = new Date(iso);
-    const month = d.toLocaleString('en-GB', { month: 'short' });
-    return `${String(d.getDate()).padStart(2, '0')} ${month} ${d.getFullYear()}`;
-}
-
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+export function formatDate(iso: string): string {
+    const [y, m, d] = iso.split('-').map(Number);
+    return `${String(d).padStart(2, '0')} ${MONTHS[m - 1]} ${y}`;
+}
 
 /** "2026-10-31" -> "Sat, 31 Oct" */
 export function formatDayHeading(iso: string): string {
@@ -27,4 +26,8 @@ export function formatMonthYear(iso: string): string {
 /** Signed amount with a real minus sign: -320 -> "−₹320", 1200 -> "+₹1,200" */
 export function formatSignedRupees(amount: number): string {
     return `${amount < 0 ? '−' : '+'}${formatRupees(Math.abs(amount))}`;
+}
+
+export function formatFileSize(bytes: number): string {
+    return bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }

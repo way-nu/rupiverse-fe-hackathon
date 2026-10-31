@@ -80,6 +80,17 @@ Re-uploading the same or an overlapping statement must be safe. Dedupe on (accou
 | 422 | `UNRECOGNISED_STATEMENT` | Readable PDF that is not a bank or card statement | Same as above |
 | 500 | `INTERNAL` | Anything else | Show message |
 
+## `GET /accounts/{accountId}/statements`
+
+Used by the Upload screen's "Imported statements" list. Returns the `statement` objects from above (newest first), each with `transactionsAdded`:
+
+```jsonc
+[ { "id": "st_01J9", "fileName": "ICICI_Sep_2026.pdf", "sizeBytes": 219136, "periodStart": "2026-09-01",
+    "periodEnd": "2026-09-30", "status": "imported", "transactionsAdded": 42 } ]
+```
+
+`GET /accounts` should also include `statementCount` (integer) on each account; the app shows a tick next to accounts that have at least one statement.
+
 ## Categories (optional for now)
 
 Categories are not finalised on the backend, so `categoryId` is **optional** and may always be `null`. The app treats `null` as "Uncategorised" and the user can fix it later.
