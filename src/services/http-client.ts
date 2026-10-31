@@ -16,4 +16,6 @@ async function request<T>(method: HttpMethod, url: string, body?: unknown): Prom
 export const http = {
     get: <T>(url: string) => request<T>('GET', url),
     post: <T>(url: string, body?: unknown) => request<T>('POST', url, body),
+    /** multipart/form-data upload. Backend swap point: build a FormData from `fields` (files as Blobs). */
+    postForm: <T>(url: string, fields: Record<string, unknown>) => request<T>('POST', url, fields),
 };

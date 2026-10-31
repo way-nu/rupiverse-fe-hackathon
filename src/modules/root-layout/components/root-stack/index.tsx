@@ -13,6 +13,11 @@ export function RootStack() {
             </Stack.Protected>
             <Stack.Protected guard={signedIn}>
                 <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="import-results" />
+                <Stack.Screen
+                    name="statement-password"
+                    options={{ presentation: 'formSheet', sheetAllowedDetents: SHEET_DETENTS, sheetGrabberVisible: true }}
+                />
                 <Stack.Screen
                     name="add-account"
                     options={{ presentation: 'formSheet', sheetAllowedDetents: SHEET_DETENTS, sheetGrabberVisible: true }}

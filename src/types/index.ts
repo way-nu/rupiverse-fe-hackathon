@@ -11,6 +11,8 @@ export type Account = {
     /** ISO date of the latest balance. */
     balanceAsOf: string;
     openingDate: string;
+    /** Number of statements imported for this account. */
+    statementCount: number;
 };
 
 export type NewAccountInput = {
@@ -46,4 +48,24 @@ export type Transaction = {
     categoryId: string | null;
     accountName: string;
     accountLast4: string | null;
+};
+
+export type PickedFile = { name: string; size: number; uri: string; mimeType: string };
+
+export type Statement = {
+    id: string;
+    fileName: string;
+    sizeBytes: number;
+    periodStart: string;
+    periodEnd: string;
+    status: 'imported' | 'skipped';
+    transactionsAdded: number;
+};
+
+/** Result of importing one statement file. Money is in rupees (the service converts from the wire format). */
+export type StatementImport = {
+    statement: Statement;
+    summary: { transactionsAdded: number; duplicatesIgnored: number; skippedBeforeOpeningDate: number; skipReason: string | null };
+    balance: { previous: number; amount: number; asOf: string };
+    transactions: Transaction[];
 };

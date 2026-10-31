@@ -1,6 +1,6 @@
 import type { HttpMethod } from '@/services/http-client';
 
-export type MockRequest = { method: HttpMethod; url: string; body?: unknown; token: string | null };
+export type MockRequest = { method: HttpMethod; url: string; body?: unknown; token: string | null; params?: Record<string, string> };
 
 export type MockRoute = {
     method: HttpMethod;
@@ -12,6 +12,7 @@ export class ApiError extends Error {
     constructor(
         public status: number,
         message: string,
+        public code?: string,
     ) {
         super(message);
     }
